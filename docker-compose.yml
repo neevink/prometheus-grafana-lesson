@@ -1,0 +1,27 @@
+version: '3.0'
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.44.0
+    ports:
+      - "9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # доступ к locallhost из docker-контейнера
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yaml
+
+  grafana:  # login: admin, password: admin
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # доступ к locallhost из docker-контейнера
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  prometheus-data: {}
+  grafana-data: {}
